@@ -1,0 +1,56 @@
+name: Summarize & Email
+
+# Trigger manually from the GitHub Actions tab
+on:
+  workflow_dispatch:
+
+jobs:
+  # ── Run 1: fires immediately on trigger ───────────────────────────────────
+  first-send:
+    name: "Run 1 — Send summary"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Run summarize & email script
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+        run: python scripts/summarize_email.py
+
+  # ── Run 2: waits 5 minutes after Run 1, then fires again ──────────────────
+  second-send:
+    name: "Run 2 — Send summary (5 min later)"
+    runs-on: ubuntu-latest
+    needs: first-send   # only starts after Run 1 completes
+    steps:
+      - name: Wait 5 minutes
+        run: sleep 300
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Run summarize & email script
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+        run: python scripts/summarize_email.py
