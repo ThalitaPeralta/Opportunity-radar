@@ -1,30 +1,18 @@
-You are running the Summarize & Email skill.
+Read the file `instructions-to-opportunity-radar-automation-plan` from the repo root.
 
-## What this skill does
-Reads the file `instructions-to-opportunity-radar-automation-plan`, summarizes it using
-the Claude API, and sends the summary by email to thaperalta@gmail.com via SendGrid.
+Summarize it as a clear, concise email addressed to a product team. Cover:
+- The goal
+- The inputs
+- The business logic
+- The expected outcomes
 
-## How to run manually (in Cursor terminal)
+Keep it under 300 words. Use bullet points where helpful. Write in plain English, no jargon.
+
+Then save the summary to `output/latest-summary.md` (create the file if it doesn't exist, overwrite if it does).
+
+After saving, run this command to send it:
 ```
-python scripts/summarize_email.py
+python scripts/send_email.py
 ```
 
-## How it runs automatically (GitHub Actions)
-Trigger it manually from the GitHub Actions tab:
-1. Go to your repo on GitHub
-2. Click **Actions** → **Summarize & Email**
-3. Click **Run workflow**
-
-The workflow runs twice automatically:
-- **Run 1**: immediately on trigger
-- **Run 2**: 5 minutes after Run 1 completes
-
-## Required secrets (set in GitHub repo settings)
-| Secret | Where to get it |
-|---|---|
-| `ANTHROPIC_API_KEY` | console.anthropic.com → API Keys |
-| `SENDGRID_API_KEY` | app.sendgrid.com → Settings → API Keys |
-| `SENDGRID_FROM_EMAIL` | A verified sender email in your SendGrid account |
-
-## Required env vars (for local runs)
-Copy `.env.example` → `.env` and fill in the three values above.
+Confirm to the user when the email has been sent and show them the path to the saved summary.
